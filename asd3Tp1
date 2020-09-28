@@ -23,98 +23,205 @@ public class TriFusionVar {
 		System.out.println(n);
 		
 		//creation du premier tableau avec des entiers aléatoires de 1-100
-		ArrayList<Integer> tableau1 = new ArrayList<Integer>();
 		Random random = new Random();
-		for(int i=0; i<n; i++) {
-			Integer a = Integer.valueOf(random.nextInt(100));
-			tableau1.add(a);
+		Integer[] tableau1 = new Integer[n];
+		for(int i = 0; i<n; i++) {
+			tableau1[i] = random.nextInt(100);
 		}
 		
 		//clone tableau
-		ArrayList<Integer> tableau2 = cloneArray(tableau1);
-		affiche(tableau2);	
+		Integer[] tableau2 = cloneTable(tableau1);
 		
-		//clone listes
-		LinkedList<Integer> liste1 = cloneListe(tableau1);
-		LinkedList<Integer> liste2 = cloneListe(tableau1);
+		//clone listes		
+		ArrayList<Integer> liste1 = cloneListe(tableau1);
+		ArrayList<Integer> liste2 = cloneListe(tableau1);
 		
-/*		//affichage du tableau
-		affiche(tableau1);
-		affiche(liste1);
-		affiche(liste2);*/
+		//tri par variante
+
+		//affichage du tableau
+
+		afficheTab(tableau1);
+		afficheListe(liste1);
+		afficheListe(liste2);
 		
+		sortListCopy(liste1);
+		afficheListe(liste1);
+		
+		sortTabCopy(tableau1);
+		afficheTab(tableau1);
+		
+		sortTabNoCopy(tableau2);
+		afficheTab(tableau2);
 		scan.close();
 	}
 	
 	
 	
 	//procedure copie tableau -> tableau
-	public static ArrayList<Integer> cloneArray(List<Integer> source) {
-		ArrayList<Integer> tableau2 = new ArrayList<Integer>();
-		for(Integer val: source) {
-			tableau2.add(Integer.valueOf((val.intValue())));
+	public static Integer[] cloneTable(Integer []source) {
+		Integer[] tableau2 = new Integer[source.length];
+		for(int i = 0; i<source.length; i++) {
+			tableau2[i] = source[i];
 		}
 		return tableau2;
 	}
 	
-	//procedure copie tableau -> Liste chainee
-	public static LinkedList<Integer> cloneListe(List<Integer> source) {
-		LinkedList<Integer> liste1 = new LinkedList<Integer>();
+	//procedure copie tableau -> Liste
+	public static ArrayList<Integer> cloneListe(Integer []source) {
+		ArrayList<Integer> liste1 = new ArrayList<Integer>();
 		for(Integer val: source) {
-			liste1.add(Integer.valueOf((val.intValue())));
+			liste1.add(val);
 		}
 		return liste1;
 	}
+
+	//affiche tous les elements d'un tableau
+	public static void afficheTab(Integer []source) {
+		for(int i = 0; i<source.length; i++) {
+			System.out.print(source[i] + " ");
+		}
+		System.out.println();
+	}
 	
-	//affiche tous les elements
-	public static void affiche(List<Integer> desElements) {
+	//affiche tous les elements d'une liste
+	public static void afficheListe(ArrayList<Integer> desElements) {
 		Iterator<Integer> iteTab1 = desElements.iterator();
 		while(iteTab1.hasNext()) {
-			System.out.println( iteTab1.next() + " ");
+			System.out.print( iteTab1.next() + " ");
 		}
+		System.out.println();
 	}
-/*	
+		
 	//Variante 1: Tri tableau avec copie
-	public static void SortTabCopy(ArrayList<Integer> source) {
-		
+	public static void sortTabCopy(Integer []source) {
+		sortRecTab(source, 0, source.length-1);
 	}
-	
-	//Variante 2: Tri tableau sans copie
-	public static void SortTabNoCopy(ArrayList<Integer> source) {
 		
+	//Variante 2: Tri tableau sans copie
+	public static void sortTabNoCopy(Integer []source) {
+		int len = 1;
+	    
+	    while (source.length > len) {
+	        
+	        for (int i = 0; i + len <= source.length - 1; i += len * 2) {
+	            int left = i;
+	            int mid = i + len - 1;
+	            int right = i + len * 2 - 1;
+	            
+	            if (right > source.length - 1)
+	                right = source.length - 1;
+
+	            mergeTab(source, left, mid, right);
+	        }
+	       
+	        len *= 2;
+	    }
+
 	}	
 	
 	//Variante 3: Tri liste avec copie
-	public static void SortListCopy(ArrayList<Integer> source) {
-		
+	public static void sortListCopy(ArrayList<Integer> source) {
+		sortRecList(source, 0, source.size()-1);
 	}	
-	
+/*
 	//Variante 4: Tri liste sans copie
 	public static void SortListNoCopy(ArrayList<Integer> source) {
+			}	*/
+	
+	
+	//tri fusion table: on separe le tableau
+	public static void sortRecTab(Integer []source, int inf, int sup) {
+		if(inf >= sup) 
+			return;
 		
+		int mid = (inf + sup)/2;
+		
+		sortRecTab(source, inf, mid);
+		sortRecTab(source, mid+1, sup);
+		mergeTab(source, inf, mid, sup);		
+	}
+	
+	//tri fusion table: on reunit les tableaux
+	public static void mergeTab(Integer []source, int inf,int mid, int sup) {
+		Integer []temp = new Integer[sup-inf+1];
+		int itLeft = inf;
+		int itRight = mid+1;
+		int itCopy = inf;
+		int itTemp = 0;
+		
+		while(itLeft <= mid && itRight <= sup) {
+			if( source[itLeft].compareTo(source[itRight]) <= 0 ) {
+				temp[itTemp] = source[itLeft];
+				itLeft++;
+			}else {
+				temp[itTemp] = source[itRight];
+				itRight++;
+			}
+			itTemp++;
+		}
+		
+		while(itLeft <= mid) {
+			temp[itTemp] = source[itLeft];
+			itLeft++;
+			itTemp++;
+		}
+		
+		while(itRight <= sup) {
+			temp[itTemp] = source[itRight];
+			itRight++;
+			itTemp++;
+		}
+		
+		for(int i = 0; i <= temp.length-1; i++) {
+			source[itCopy] = temp[i];
+			itCopy++;
+		}		
 	}	
-	*/
+	
+	//tri fusion liste: on separe la liste
+	public static void sortRecList(ArrayList<Integer> source, int inf, int sup) {
+		if(inf >= sup) 
+			return;
+		
+		int mid = (inf + sup)/2;
+		
+		sortRecList(source, inf, mid);
+		sortRecList(source, mid+1, sup);
+		mergeList(source, inf, mid, sup);
+	}
+	
+	//tri fusion liste: on reunit les listes
+	public static void mergeList(ArrayList<Integer> source, int inf,int mid, int sup) {
+		ArrayList<Integer> temp = new ArrayList<>();
+		int itLeft = inf;
+		int itRight = mid+1;
+		int itCopy = inf;
+		
+		while(itLeft <= mid && itRight <= sup) {
+			if( source.get(itLeft).compareTo(source.get(itRight)) <= 0 ) {
+				temp.add(source.get(itLeft));
+				itLeft++;
+			}else {
+				temp.add(source.get(itRight));
+				itRight++;
+			}
+		}
+		
+		while(itLeft <= mid) {
+			temp.add(source.get(itLeft));
+			itLeft++;
+		}
+		
+		while(itRight <= sup) {
+			temp.add(source.get(itRight));
+			itRight++;
+		}
+		
+		for(int i = 0; i<= temp.size()-1; i++) {
+			source.set(itCopy, temp.get(i));
+			itCopy++;
+		}
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
