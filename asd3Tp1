@@ -40,17 +40,17 @@ public class TriFusionVar {
 		afficheListe(liste1);
 
 		//tri par variante
+			//tri sans copie
 		sortListNoCopy(liste1);
 		afficheListe(liste1);
 		
 		sortTabNoCopy(tableau1);
 		afficheTab(tableau1);
+
+			//tri avec copie
+		Integer []tableau2tri = sortTabCopy(tableau2);
+		afficheTab(tableau2tri);
 		
-		Integer []tab2tri = sortTabCopy(tableau2);
-		afficheTab(tab2tri);
-		
-/*		sortTabNoCopy(tableau2);
-		afficheTab(tableau2);*/
 		scan.close();
 	}
 	
@@ -95,7 +95,7 @@ public class TriFusionVar {
 		
 	//Variante 1: Tri tableau avec copie
 	public static Integer[] sortTabCopy(Integer []source) {
-		return sortTabCopyAux(source, 0, source.length-1);
+		return sortTabCopyAux(source);
 	}
 		
 	//Variante 2: Tri tableau sans copie
@@ -116,20 +116,22 @@ public class TriFusionVar {
 	
 	//tri fusion tableau avec copie
 	public static Integer [] sortTabCopyAux(Integer []source) {
-		if(source.length <= 2) {
-			source[0] < source[1]
-			return 
-		}else
-		int mid = ;
+		if(source.length == 1) {
+			return source;
+		}
 		
-		Integer [] sousTab1= cloneTable(source, 0, mid);
-		Integer [] sousTab2= cloneTable(source, mid+1, source.length-1);
+		int mid = source.length/2;
+		Integer [] sousTab1= new Integer[mid];
+		for(int i=0; i<mid; i++) {
+			sousTab1[i] = source[i];
+		}
+
+		Integer [] sousTab2=new Integer[source.length- mid];
+		for(int i=0; i<source.length-mid; i++) {
+			sousTab2[i] = source[mid+i];
+		}		
 		
-		sortTabCopyAux(sousTab1);
-		sortTabCopyAux(sousTab2);
-		
-		return mergeTabCopy(sousTab1, sousTab2);
-		
+		return mergeTabCopy(sortTabCopyAux(sousTab1), sortTabCopyAux(sousTab2));
 	}
 	
 	
